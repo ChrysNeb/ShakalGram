@@ -22,6 +22,8 @@ APK при успешной сборке появляется в `TMessagesProj_
 
 Для FCM замените `TMessagesProj_AppStandalone/google-services.json` собственной конфигурацией для пакета ShakalGram и передайте `-PSHAKALGRAM_ENABLE_FCM=true`. Для выпуска понадобится собственный ключ подписи.
 
+Для сборки через GitHub Actions добавьте `SHAKALGRAM_API_ID` и `SHAKALGRAM_API_HASH` в **Settings → Secrets and variables → Actions → Repository secrets**. Запустите workflow **ShakalGram Android** с `login_enabled=true`. Артефакт `ShakalGram-login-enabled` содержит APK для проверки входа. Это debug-сборка. Для обновлений поверх предыдущего APK нужен тот же ключ подписи.
+
 ## Статус
 
 Исходники первого форка. Вход с реальным аккаунтом, пуш-уведомления и обработка медиа в чате ещё не проверены. Отдельные фото-, видео- и аудиоэффекты внутри чата не входят в эту версию.
