@@ -5121,6 +5121,12 @@ public class ChatActivityEnterView extends FrameLayout implements
 
         ItemOptions options = ItemOptions.makeOptions(this, resourcesProvider, sendButton);
 
+        if (richDraftMessage == null && audioToSend == null && messageEditText != null
+                && !isEditingMessage() && !messageEditText.getText().toString().trim().isEmpty()
+                && !messageEditText.getText().toString().trim().startsWith("/")) {
+            options.add(R.drawable.msg_edit, getString(R.string.ShakalDraft), this::previewShakalDraft);
+        }
+
         final boolean self = parentFragment != null && UserObject.isUserSelf(parentFragment.getCurrentUser());
         boolean scheduleButtonValue = parentFragment != null && parentFragment.canScheduleMessage();
         boolean sendWithoutSoundButtonValue = !(self || slowModeTimer > 0 && !isInScheduleMode());
@@ -7355,6 +7361,33 @@ public class ChatActivityEnterView extends FrameLayout implements
             recordedAudioPanel.setVisibility(GONE);
         }
         isRecordingStateChanged();
+    }
+
+    private void previewShakalDraft() {
+        if (messageSendPreview != null) {
+            messageSendPreview.dismiss(false);
+            messageSendPreview = null;
+        }
+        if (messageEditText == null || parentActivity == null) {
+            return;
+        }
+        final String original = messageEditText.getText().toString();
+        final String transformed = org.telegram.messenger.ShakalText.transform(original);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(parentActivity, resourcesProvider);
+        dialog.setTitle(getString(R.string.ShakalDraft));
+        dialog.setMessage(original.equals(transformed) ? getString(R.string.ShakalDraftNoChanges) : transformed);
+        if (!original.equals(transformed)) {
+            dialog.setPositiveButton(getString(R.string.ShakalDraftApply), (d, which) -> {
+                if (messageEditText != null && original.contentEquals(messageEditText.getText())) {
+                    // Replace matching words in place so Telegram retains formatting spans.
+                    org.telegram.messenger.ShakalText.editFromEnd(original, messageEditText.getText()::replace);
+                }
+            });
+            dialog.setNegativeButton(getString(R.string.Cancel), null);
+        } else {
+            dialog.setPositiveButton(getString(R.string.OK), null);
+        }
+        dialog.show();
     }
 
     public boolean sendMessage() {

@@ -1676,7 +1676,7 @@ public class Theme {
             if (isDark != UNKNOWN) {
                 return isDark == DARK;
             }
-            if ("Dark Blue".equals(name) || "Night".equals(name)) {
+            if ("Dark Blue".equals(name) || "Night".equals(name) || "ShakalGram".equals(name)) {
                 isDark = DARK;
             } else if ("Blue".equals(name) || "Arctic Blue".equals(name) || "Day".equals(name)) {
                 isDark = LIGHT;
@@ -4098,6 +4098,16 @@ public class Theme {
         themes.add(themeInfo);
         themesDict.put("Night", themeInfo);
 
+        ThemeInfo shakalTheme = new ThemeInfo();
+        shakalTheme.name = "ShakalGram";
+        shakalTheme.assetName = "shakalgram.attheme";
+        shakalTheme.previewBackgroundColor = 0xff0f1115;
+        shakalTheme.previewInColor = 0xff202530;
+        shakalTheme.previewOutColor = 0xff51370f;
+        shakalTheme.sortIndex = 5;
+        themes.add(shakalTheme);
+        themesDict.put("ShakalGram", shakalTheme);
+
         String themesString = themeConfig.getString("themes2", null);
 
         int remoteVersion = themeConfig.getInt("remote_version", 0);
@@ -4148,7 +4158,7 @@ public class Theme {
         try {
             final ThemeInfo themeDarkBlue = themesDict.get("Dark Blue");
 
-            String theme = preferences.getString("theme", null);
+            String theme = preferences.getString("theme", "ShakalGram");
             if ("Default".equals(theme)) {
                 applyingTheme = themesDict.get("Blue");
                 applyingTheme.currentAccentId = DEFALT_THEME_ACCENT_ID;

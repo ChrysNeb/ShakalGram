@@ -114,7 +114,21 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 }
 
+def shakalApiId = providers.gradleProperty('SHAKALGRAM_API_ID')
+        .orElse(providers.environmentVariable('SHAKALGRAM_API_ID')).getOrElse('')
+def shakalApiHash = providers.gradleProperty('SHAKALGRAM_API_HASH')
+        .orElse(providers.environmentVariable('SHAKALGRAM_API_HASH')).getOrElse('')
+if ((shakalApiId || shakalApiHash) &&
+        (!(shakalApiId ==~ /[1-9][0-9]{0,9}/) || !(shakalApiHash ==~ /[a-fA-F0-9]{32}/)
+                || shakalApiId.toLong() > Integer.MAX_VALUE || shakalApiId == '4')) {
+    throw new GradleException('Set a valid personal SHAKALGRAM_API_ID and SHAKALGRAM_API_HASH together.')
+}
+
 android {
+    defaultConfig {
+        buildConfigField 'int', 'SHAKALGRAM_API_ID', shakalApiId ?: '0'
+        buildConfigField 'String', 'SHAKALGRAM_API_HASH', '"' + shakalApiHash + '"'
+    }
     compileSdkVersion 36
     buildToolsVersion '36.0.0'
     ndkVersion "27.2.12479018"
@@ -255,7 +269,6 @@ def getProps(String propName) {
         return "";
     }
 }
-apply plugin: 'com.google.gms.google-services'
 
 task checkVisibility {
     doFirst {

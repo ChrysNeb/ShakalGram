@@ -74,7 +74,6 @@ android {
         debug {
             debuggable true
             jniDebuggable true
-            signingConfig signingConfigs.debug
             applicationIdSuffix ".web"
             minifyEnabled false
             multiDexEnabled true
@@ -163,4 +162,6 @@ android {
     }
 }
 
-apply plugin: 'com.google.gms.google-services'
+if (file('google-services.json').exists()) {
+    apply plugin: 'com.google.gms.google-services'
+}

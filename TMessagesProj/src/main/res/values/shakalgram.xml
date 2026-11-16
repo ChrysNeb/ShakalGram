@@ -1,0 +1,7 @@
+<resources>
+    <string name="ShakalGramName" translatable="false">ShakalGram</string>
+    <string name="ShakalDraft">Shakalize draft</string>
+    <string name="ShakalDraftApply">Use in draft</string>
+    <string name="ShakalDraftNoChanges">This draft has no words from the ShakalGram dictionary.</string>
+    <string name="ShakalApiMissing">ShakalGram is an unofficial client using the Telegram API. Set your own API ID and hash when building it to enable sign-in.</string>
+</resources>

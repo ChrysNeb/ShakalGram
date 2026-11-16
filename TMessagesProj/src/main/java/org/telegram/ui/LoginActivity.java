@@ -2896,6 +2896,14 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             if (getParentActivity() == null || nextPressed || isRequestingFirebaseSms) {
                 return;
             }
+            if (BuildVars.APP_ID == 0) {
+                new AlertDialog.Builder(getParentActivity())
+                        .setTitle(getString(R.string.ShakalGramName))
+                        .setMessage(getString(R.string.ShakalApiMissing))
+                        .setPositiveButton(getString(R.string.OK), null)
+                        .show();
+                return;
+            }
 
             TelephonyManager tm = (TelephonyManager) ApplicationLoader.applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
             if (BuildVars.DEBUG_VERSION) {
