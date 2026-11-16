@@ -1,5 +1,11 @@
 name: ShakalGram Android
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      publish_preview:
+        description: Publish the initial Android preview in Releases
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -31,3 +37,44 @@ jobs:
           name: ShakalGram-development-no-login
           path: TMessagesProj_AppStandalone/build/outputs/apk/**/*.apk
           if-no-files-found: error
+  release:
+    if: inputs.publish_preview && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: shakalgram-initial-preview
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ShakalGram-development-no-login
+          path: artifact
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'build-tools;36.0.0'
+          log-accepted-android-sdk-licenses: false
+      - name: Verify and publish the APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          mapfile -d '' apks < <(find artifact -type f -name '*.apk' -print0)
+          test "${#apks[@]}" -eq 1
+          cp "${apks[0]}" ShakalGram-0.1.0-preview.1.apk
+          apksigner="$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          aapt="$ANDROID_HOME/build-tools/36.0.0/aapt"
+          "$apksigner" verify --verbose ShakalGram-0.1.0-preview.1.apk
+          "$aapt" dump badging ShakalGram-0.1.0-preview.1.apk > apk-info.txt
+          grep -q "^package: name='space.shakalizator.gram.web'" apk-info.txt
+          sha256sum ShakalGram-0.1.0-preview.1.apk > SHA256SUMS.txt
+          cat > notes.md <<'EOF'
+          Первая тестовая сборка ShakalGram. В ней отдельная иконка, тёмная тема с янтарными акцентами и действие «Зашакалить черновик».
+
+          Эта debug-сборка предназначена для просмотра интерфейса. Вход в Telegram не настроен. Для сборки с авторизацией нужны собственные API ID и hash по инструкции в README.
+
+          Исходники доступны в этом репозитории. Контрольная сумма APK приложена к выпуску.
+          EOF
+          gh release create v0.1.0-preview.1 --target "$GITHUB_SHA" --prerelease \
+            --title 'ShakalGram 0.1.0 Preview' --notes-file notes.md \
+            ShakalGram-0.1.0-preview.1.apk SHA256SUMS.txt
