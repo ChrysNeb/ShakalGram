@@ -162,6 +162,6 @@ android {
     }
 }
 
-if (file('google-services.json').exists()) {
+if (providers.gradleProperty('SHAKALGRAM_ENABLE_FCM').orElse('false').get().toBoolean()) {
     apply plugin: 'com.google.gms.google-services'
 }

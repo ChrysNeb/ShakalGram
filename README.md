@@ -13,14 +13,14 @@
 ```bash
 git clone --recurse-submodules --shallow-submodules https://github.com/ChrysNeb/ShakalGram.git
 cd ShakalGram
-sh ./gradlew :TMessagesProj_AppStandalone:assembleAfatDebug
+bash ./gradlew :TMessagesProj_AppStandalone:assembleAfatDebug
 ```
 
 APK при успешной сборке появляется в `TMessagesProj_AppStandalone/build/outputs/apk/`. Для Windows запустите эту же задачу через Android Studio или через `org.gradle.wrapper.GradleWrapperMain` из JAR в `gradle/wrapper`.
 
 Для входа получите собственные `api_id` и `api_hash` в [Telegram API development tools](https://my.telegram.org/apps). Задайте переменные среды `SHAKALGRAM_API_ID` и `SHAKALGRAM_API_HASH` или одноимённые Gradle properties в пользовательском файле Gradle. Не записывайте их в репозиторий. Без них сборка предназначена для проверки интерфейса, а экран входа объясняет настройку.
 
-Для FCM можно добавить собственный `TMessagesProj_AppStandalone/google-services.json` для пакета ShakalGram. Код и проверка APK используют standalone-модуль. Для выпуска понадобится собственный ключ подписи.
+Для FCM замените `TMessagesProj_AppStandalone/google-services.json` собственной конфигурацией для пакета ShakalGram и передайте `-PSHAKALGRAM_ENABLE_FCM=true`. Для выпуска понадобится собственный ключ подписи.
 
 ## Статус
 
